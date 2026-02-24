@@ -6,58 +6,72 @@ version: 1.0.0
 
 # enable-kanban
 
-Set up a project-specific kanban board by configuring the `dynamic-kanban-mcp` server for the current project.
+Execute the following steps IN ORDER using your tools directly. Do NOT delegate to other agents.
 
-## Steps
+## Step 1: Detect project root
 
-### 1. Detect project root
+Use the Bash tool to run: `git rev-parse --show-toplevel`
 
-Run `git rev-parse --show-toplevel`. If that fails (not a git repo), use `pwd`. Store as `PROJECT_ROOT`. `PROJECT_NAME` = basename of `PROJECT_ROOT`.
+If it fails, run: `pwd`
 
-### 2. Locate the kanban server
+Store the result as PROJECT_ROOT. PROJECT_NAME = the last path component of PROJECT_ROOT.
 
-Check for the server in this order: `~/Projects/dynamic-kanban-mcp` (developer install, primary), then `~/.local/share/cc-board/server` (standard install).
+## Step 2: Locate the kanban server
 
-If neither exists, run: `mkdir -p ~/.local/share/cc-board && git clone https://github.com/talpah/dynamic-kanban-mcp ~/.local/share/cc-board/server`
+Use the Bash tool to check: `ls ~/Projects/dynamic-kanban-mcp/mcp-kanban-server.py 2>/dev/null && echo FOUND || echo NOT_FOUND`
 
-Store the resolved path as `SERVER_DIR`.
+If FOUND: SERVER_DIR = `/home/$USER/Projects/dynamic-kanban-mcp` (expand the actual home path).
 
-### 3. Verify the KANBAN_DATA_DIR patch
+If NOT FOUND: check `~/.local/share/cc-board/server/mcp-kanban-server.py`. If also not found, run:
 
-Run `grep -q "KANBAN_DATA_DIR" $SERVER_DIR/config.py` to check if already patched.
+    mkdir -p ~/.local/share/cc-board
+    git clone https://github.com/talpah/dynamic-kanban-mcp ~/.local/share/cc-board/server
 
-If not found, use the Edit tool to update `get_progress_file_path` in `$SERVER_DIR/config.py`. Find the method that returns `str(Path(__file__).parent / "kanban-progress.json")` and replace with a version that first checks `os.getenv("KANBAN_DATA_DIR")` and returns `str(Path(data_dir) / "kanban-progress.json")` when set.
+Then SERVER_DIR = `~/.local/share/cc-board/server`.
 
-### 4. Install Python dependencies
+## Step 3: Verify the KANBAN_DATA_DIR patch
 
-Run `cd $SERVER_DIR && uv sync` to install from `pyproject.toml` into `$SERVER_DIR/.venv`.
+Use the Bash tool: `grep -q "KANBAN_DATA_DIR" SERVER_DIR/config.py && echo PATCHED || echo NOT_PATCHED`
 
-### 5. Create project data directory
+If NOT_PATCHED, use the Edit tool to update `get_progress_file_path` in `SERVER_DIR/config.py`. Find this exact method body:
 
-Run `mkdir -p $PROJECT_ROOT/.kanban`.
+    return str(Path(__file__).parent / "kanban-progress.json")
 
-### 6. Write or update `.mcp.json`
+Replace it with:
 
-Read `$PROJECT_ROOT/.mcp.json` if it exists. Merge in the `kanban` entry under `mcpServers`. Write back. The entry:
+    data_dir = os.getenv("KANBAN_DATA_DIR")
+    if data_dir:
+        return str(Path(data_dir) / "kanban-progress.json")
+    return str(Path(__file__).parent / "kanban-progress.json")
+
+## Step 4: Install Python dependencies
+
+Use the Bash tool: `cd SERVER_DIR && uv sync`
+
+## Step 5: Create project data directory
+
+Use the Bash tool: `mkdir -p PROJECT_ROOT/.kanban`
+
+## Step 6: Write .mcp.json
+
+Read `PROJECT_ROOT/.mcp.json` with the Read tool if it exists. Merge in — or create — the following entry under `mcpServers`, then write it back with the Write tool. Use EXACT field names and values shown. Replace SERVER_DIR and PROJECT_ROOT with actual absolute paths:
 
     {
       "mcpServers": {
         "kanban": {
           "command": "uv",
-          "args": ["run", "--project", "<SERVER_DIR>", "python", "<SERVER_DIR>/mcp-kanban-server.py"],
+          "args": ["run", "--project", "SERVER_DIR", "python", "SERVER_DIR/mcp-kanban-server.py"],
           "env": {
-            "KANBAN_DATA_DIR": "<PROJECT_ROOT>/.kanban",
+            "KANBAN_DATA_DIR": "PROJECT_ROOT/.kanban",
             "KANBAN_WEBSOCKET_HOST": "127.0.0.1"
           }
         }
       }
     }
 
-Replace `<SERVER_DIR>` and `<PROJECT_ROOT>` with actual absolute paths.
+## Step 7: Update CLAUDE.md
 
-### 7. Update `CLAUDE.md`
-
-If `$PROJECT_ROOT/CLAUDE.md` does not contain `## Kanban Board`, append this section (replace `<SERVER_DIR>` with actual path):
+Read `PROJECT_ROOT/CLAUDE.md` with the Read tool. If it does not contain `## Kanban Board`, append the following using the Edit or Write tool (replace SERVER_DIR with actual path):
 
     ## Kanban Board
 
@@ -68,14 +82,19 @@ If `$PROJECT_ROOT/CLAUDE.md` does not contain `## Kanban Board`, append this sec
 
     Key tools:
     - `kanban_status` — board overview with task counts per column
-    - `add_feature` — add a task (`id`, `title`, `description`, `priority`, `effort`)
-    - `kanban_move_card` — advance: `backlog` → `ready` → `progress` → `testing` → `done`
+    - `add_feature` — add a task (id, title, description, priority, effort)
+    - `kanban_move_card` — advance: backlog → ready → progress → testing → done
     - `kanban_get_next_task` — next highest-priority ready task
     - `kanban_start_session` / `kanban_end_session` — track work sessions
 
     Board data: `.kanban/kanban-progress.json`
-    Board UI: open `<SERVER_DIR>/kanban-board.html` in your browser (WebSocket on port 8765).
+    Board UI: open SERVER_DIR/kanban-board.html in your browser (WebSocket on port 8765).
 
-### 8. Report to the user
+## Step 8: Report to the user
 
-Summarise what was done: project name and root, server path, board data path, board UI path. Remind user to restart Claude Code (or reload MCP servers) for the kanban MCP to activate.
+Tell the user:
+- Project: PROJECT_NAME (PROJECT_ROOT)
+- Server: SERVER_DIR/mcp-kanban-server.py
+- Board data: PROJECT_ROOT/.kanban/
+- Board UI: SERVER_DIR/kanban-board.html
+- They must restart Claude Code (or reload MCP servers) to activate the kanban MCP.
