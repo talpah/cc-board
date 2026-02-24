@@ -2,7 +2,8 @@
   "name": "cc-board",
   "version": "1.0.0",
   "description": "Per-project kanban board for Claude Code, backed by dynamic-kanban-mcp",
-  "commands": [
-    "./commands/enable-kanban.md"
-  ]
+  "author": {
+    "name": "Cosmin",
+    "url": "https://github.com/talpah"
+  }
 }

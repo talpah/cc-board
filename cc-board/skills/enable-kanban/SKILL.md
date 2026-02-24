@@ -1,3 +1,9 @@
+---
+name: Enable Kanban
+description: This skill should be used when the user runs /cc-board:enable-kanban or asks to "set up kanban", "add kanban board", "enable kanban for this project", or "set up task board". Sets up dynamic-kanban-mcp for the current project by configuring .mcp.json and updating CLAUDE.md.
+version: 1.0.0
+---
+
 # enable-kanban
 
 Set up a project-specific kanban board by configuring the `dynamic-kanban-mcp` server for the current project.

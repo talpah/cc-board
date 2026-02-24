@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "cc-board",
+  "version": "1.0.0",
+  "description": "Per-project kanban board for Claude Code",
+  "owner": {
+    "name": "Cosmin",
+    "url": "https://github.com/talpah"
+  },
+  "plugins": [
+    {
+      "name": "cc-board",
+      "description": "Per-project kanban board backed by dynamic-kanban-mcp. Run /cc-board:enable-kanban to set up a board for any project.",
+      "version": "1.0.0",
+      "source": "./cc-board",
+      "category": "productivity"
+    }
+  ]
+}
