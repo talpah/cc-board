@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "kanban": {
+      "command": "uv",
+      "args": ["run", "--project", "/home/cosmin/Projects/dynamic-kanban-mcp", "python", "/home/cosmin/Projects/dynamic-kanban-mcp/mcp-kanban-server.py"],
+      "env": {
+        "KANBAN_DATA_DIR": "/home/cosmin/Projects/cc-board/.kanban",
+        "KANBAN_WEBSOCKET_HOST": "127.0.0.1"
+      }
+    }
+  }
+}

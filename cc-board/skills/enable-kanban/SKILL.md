@@ -72,10 +72,10 @@ If **not found**, apply the patch — use the Edit tool to update `get_progress_
 ### 4. Install Python dependencies
 
 ```bash
-cd $SERVER_DIR && uv pip install -r requirements.txt
+cd $SERVER_DIR && uv sync
 ```
 
-Only if deps are not already installed (check with `python3 -c "import websockets, pydantic"`).
+This installs from `pyproject.toml` (runtime deps: `pydantic`, `websockets`) into `$SERVER_DIR/.venv`.
 
 ---
 
@@ -96,8 +96,8 @@ The entry to add/replace:
 {
   "mcpServers": {
     "kanban": {
-      "command": "python3",
-      "args": ["<SERVER_DIR>/mcp-kanban-server.py"],
+      "command": "uv",
+      "args": ["run", "--project", "<SERVER_DIR>", "python", "<SERVER_DIR>/mcp-kanban-server.py"],
       "env": {
         "KANBAN_DATA_DIR": "<PROJECT_ROOT>/.kanban",
         "KANBAN_WEBSOCKET_HOST": "127.0.0.1"
