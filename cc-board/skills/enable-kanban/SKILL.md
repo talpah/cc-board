@@ -19,8 +19,6 @@ git rev-parse --show-toplevel
 If that fails (not a git repo), use `pwd`. Store as `PROJECT_ROOT`.
 `PROJECT_NAME` = basename of `PROJECT_ROOT`.
 
----
-
 ### 2. Locate the kanban server
 
 Check for the server in this order:
@@ -32,12 +30,9 @@ If neither exists, clone and install:
 ```bash
 mkdir -p ~/.local/share/cc-board
 git clone https://github.com/talpah/dynamic-kanban-mcp ~/.local/share/cc-board/server
-uv pip install websockets pydantic
 ```
 
 Store the resolved path as `SERVER_DIR`.
-
----
 
 ### 3. Verify the KANBAN_DATA_DIR patch
 
@@ -67,8 +62,6 @@ If **not found**, apply the patch — use the Edit tool to update `get_progress_
         return str(Path(__file__).parent / "kanban-progress.json")
 ```
 
----
-
 ### 4. Install Python dependencies
 
 ```bash
@@ -77,15 +70,11 @@ cd $SERVER_DIR && uv sync
 
 This installs from `pyproject.toml` (runtime deps: `pydantic`, `websockets`) into `$SERVER_DIR/.venv`.
 
----
-
 ### 5. Create project data directory
 
 ```bash
 mkdir -p $PROJECT_ROOT/.kanban
 ```
-
----
 
 ### 6. Write or update `.mcp.json`
 
@@ -109,14 +98,11 @@ The entry to add/replace:
 
 Replace `<SERVER_DIR>` and `<PROJECT_ROOT>` with their actual absolute paths (expand `~`).
 
----
-
 ### 7. Update `CLAUDE.md`
 
 If `$PROJECT_ROOT/CLAUDE.md` does **not** contain the string `## Kanban Board`, append this section:
 
 ```markdown
-
 ## Kanban Board
 
 This project has a kanban board enabled. The `kanban` MCP server starts automatically with each Claude Code session.
@@ -136,8 +122,6 @@ Board UI: open `<SERVER_DIR>/kanban-board.html` in your browser (WebSocket on po
 ```
 
 Replace `<SERVER_DIR>` with the actual absolute path.
-
----
 
 ### 8. Report to the user
 
