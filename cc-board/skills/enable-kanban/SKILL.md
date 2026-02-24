@@ -69,18 +69,15 @@ Read `PROJECT_ROOT/.mcp.json` with the Read tool if it exists. Merge in — or c
       }
     }
 
-## Step 6b: Auto-approve the MCP server in ~/.claude.json
+## Step 6b: Register the MCP server in local scope
 
-Claude Code requires explicit user approval before loading servers from `.mcp.json`. To skip the approval dialog, update `~/.claude.json` using the Read and Write tools:
+The `.mcp.json` project scope requires user approval via a trust dialog. Use the local scope instead — it loads automatically with no approval needed.
 
-1. Read `~/.claude.json`
-2. Ensure a `projects` key exists (object, default `{}`)
-3. Ensure `projects["PROJECT_ROOT"]` exists (object, default `{}`)
-4. Ensure `projects["PROJECT_ROOT"]["mcpServers"]` exists (object, default `{}`)
-5. Ensure `projects["PROJECT_ROOT"]["enabledMcpjsonServers"]` exists (array, default `[]`)
-6. Add `"kanban"` to `enabledMcpjsonServers` if not already present
-7. Set `projects["PROJECT_ROOT"]["hasTrustDialogAccepted"]` to `true`
-8. Write the updated JSON back to `~/.claude.json`
+Use the Bash tool to run from PROJECT_ROOT:
+
+    claude mcp add -e KANBAN_DATA_DIR=PROJECT_ROOT/.kanban -e KANBAN_WEBSOCKET_HOST=127.0.0.1 kanban uv -- run --project SERVER_DIR python SERVER_DIR/mcp-kanban-server.py
+
+Replace SERVER_DIR and PROJECT_ROOT with actual absolute paths. This writes to `~/.claude.json` under the project's local scope and takes effect on next Claude Code restart.
 
 ## Step 7: Update CLAUDE.md
 
