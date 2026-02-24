@@ -100,9 +100,9 @@ Replace `<SERVER_DIR>` and `<PROJECT_ROOT>` with their actual absolute paths (ex
 
 ### 7. Update `CLAUDE.md`
 
-If `$PROJECT_ROOT/CLAUDE.md` does **not** contain the string `## Kanban Board`, append this section:
+If `$PROJECT_ROOT/CLAUDE.md` does **not** contain the string `## Kanban Board`, append this section (replace `<SERVER_DIR>` with the actual absolute path):
 
-```markdown
+```text
 ## Kanban Board
 
 This project has a kanban board enabled. The `kanban` MCP server starts automatically with each Claude Code session.
@@ -120,8 +120,6 @@ Key tools:
 Board data: `.kanban/kanban-progress.json`
 Board UI: open `<SERVER_DIR>/kanban-board.html` in your browser (WebSocket on port 8765).
 ```
-
-Replace `<SERVER_DIR>` with the actual absolute path.
 
 ### 8. Report to the user
 
